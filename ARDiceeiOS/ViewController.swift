@@ -23,11 +23,31 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
+        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.01, chamferRadius: 0.01)
+        
+    
+        
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.red
+        cube.materials = [material]
+        
+        // https://www.solarsystemscope.com
+        
+        let moon = SCNSphere(radius: 0.2)
+        let materialSphere = SCNMaterial()
+        materialSphere.diffuse.contents = UIImage(named: "art.scnassets/8k_moon.jpg")
+        moon.materials = [materialSphere]
+        let node = SCNNode()
+        node.position = SCNVector3(x:0, y: 0.1, z: -0.5)
+        node.geometry = moon
+        
+        sceneView.scene.rootNode.addChildNode(node)
+        sceneView.autoenablesDefaultLighting = true
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+       // let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         // Set the scene to the view
-        sceneView.scene = scene
+        //sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
