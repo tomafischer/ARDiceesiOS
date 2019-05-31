@@ -22,6 +22,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
+        sceneView.debugOptions = [SCNDebugOptions.showFeaturePoints]
         
         //        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.01, chamferRadius: 0.01)
         //
@@ -63,7 +64,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
         
-        
+        configuration.planeDetection = .horizontal
         
         print("Session is supported: \(ARWorldTrackingConfiguration.isSupported)")
         print("ARWorldTrackingSession is supported: \(ARWorldTrackingConfiguration.isSupported)")
@@ -88,6 +89,31 @@ class ViewController: UIViewController, ARSCNViewDelegate {
      return node
      }
      */
+    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        if anchor is ARPlaneAnchor{
+            print("plane detected")
+            let planeAncher = anchor as! ARPlaneAnchor
+            
+        // 1 getting a plane from the anchor
+            let plane = SCNPlane(width: CGFloat(planeAncher.extent.x), height: CGFloat(planeAncher.extent.z))
+        // 2 getting a SCNNode from anchor and rotate 90
+            let planeNode = SCNNode()
+            planeNode.position = SCNVector3(planeAncher.center.x, 0.0, planeAncher.center.z)
+            planeNode.transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
+        // 3 create material
+            let gridMaterial = SCNMaterial()
+            gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/grid.png")
+            plane.materials = [gridMaterial]
+            planeNode.geometry = plane
+            
+            // 4 add to final node
+            node.addChildNode(planeNode)
+            
+        }else{
+            print("not ARPlaneAnchor detected")
+        }
+    }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
